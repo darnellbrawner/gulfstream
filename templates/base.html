@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <style>
+        /* * {
+          box-sizing: border-box;
+        } */
+        
+        /* Create three equal columns that floats next to each other */
+        .column {
+          float: left;
+          width: 33.33%;
+          padding: 10px;
+          height: 200px; /* Should be removed. Only for demonstration */
+        }
+        
+        /* Clear floats after the columns */
+        .row:after {
+          content: "";
+          display: table;
+          clear: both;
+        }
+        </style>
+</head>
+
+<body>
+    <div style="margin-top: 50px;" class="ui container">
+        <h1 class="ui center aligned header">Gulf Stream Planes</h1>
+        <hr>
+
+        {% for plane in plane_list %}
+        <div class="ui segment">
+            <p class="ui big header">{{ plane.name }}</p>
+            <div class="row">
+                <div class="column">
+                    <p class="ui big header">Performance</p>
+                    <p>{{ plane.max_range}} {{ plane.max_range_unit}}: Max Range</p>
+                    <p>{{ plane.high_speed_cruise }} {{ plane.cruising_unit }}: High Speed Cruise</p>
+                    <p>{{ plane.long_range_cruise }} {{ plane.cruising_unit }}: Long Range Cruise</p>
+                </div>
+                <div class="column">
+                    <p class="ui big header">Cabin</p>
+                    <p>Up to {{ plane.living_areas_max }}: Living Area</p>
+
+                    <p>{{ plane.window_count}}: {{ plane.window.size }}
+                        {% if plane.window.panoramic == True %}
+                        Panoramic
+                        {% else %}
+                        {% endif %}
+                          {{ plane.window.shape }} Windows</p>
+                    <p>{{ plane.total_interior_length }} cm: Total Interior Length</p>
+                </div>
+                <div class="column">
+                    <p class="ui big header">Systems</p>
+                    <p>{{ plane.avionic.name}} : Avionics</p>
+                    <p>{{ plane.engine_count}} x {{ plane.engine.make }} {{ plane.engine.model }}: Engines</p>
+
+                </div>
+
+           </div>
+            {% if plane.delivered == False %}
+            <span class="ui gray label">Not Complete</span>
+            {% else %}
+            <span class="ui green label">Completed</span>
+            {% endif %}
+<!--
+            <a class="ui blue button" href="/update/{{ plane.id }}">Update</a>
+            <a class="ui red button" href="/delete/{{ plane.id }}">Delete</a>
+-->
+        </div>
+        {% endfor %}
+    </div>
+</body>
+
+</html>
