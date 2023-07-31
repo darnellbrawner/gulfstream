@@ -1,6 +1,7 @@
 
 # Database initial data
 INITIAL_DATA = {
+    
     'manufacturers': [
         {
             'id': 1,
@@ -234,14 +235,19 @@ INITIAL_DATA = {
       ]
 }
 
-
-from fastapi import FastAPI, Depends, Request, Form, status
+from fastapi.middleware.cors import CORSMiddleware
+import random
+from fastapi import FastAPI, Depends, Request, Form, status, HTTPException
 
 from starlette.responses import RedirectResponse
 from starlette.templating import Jinja2Templates
 
 from sqlalchemy.orm import Session
 from sqlalchemy import event
+
+from sqlalchemy import select
+from sqlalchemy.orm import joinedload
+
 
 import logging
 logger = logging.getLogger(__name__)
@@ -253,10 +259,23 @@ import models
 from database import SessionLocal, engine
 
 
-from models import Plane, Avionic, Engine, Manufacturer, Window 
+from models import Plane, Avionic, Engine, Manufacturer, Window
 
 templates = Jinja2Templates(directory="templates")
 app = FastAPI()
+
+origins = [
+     "http://localhost:5173"
+ ]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # This method receives a table, a connection and inserts data to that table.
 def initialize_table(target, connection, **kw):
@@ -285,6 +304,34 @@ def get_db():
         yield db
     finally:
         db.close()
+
+@app.get("/rand")
+async def hello():
+   return random.randint(0, 100)
+
+@app.get("/planes")
+async def planes(request: Request, db: Session = Depends(get_db)):
+    planes = db.query(models.Plane
+                      ).options(joinedload(models.Plane.window)
+                        ).options(joinedload(models.Plane.avionic)
+                        ).options(joinedload(models.Plane.engine)).all()
+    return planes
+
+
+@app.get("/engines")
+async def engines(request: Request, db: Session = Depends(get_db)):
+    engines = db.query(models.Engine).options(joinedload(models.Engine.planes)).all()
+    return engines
+
+@app.get("/avionics")
+async def avionics(request: Request, db: Session = Depends(get_db)):
+    avionics = db.query(models.Avionic).options(joinedload(models.Avionic.planes)).all()
+    return avionics
+
+@app.get("/manufacturers")
+async def manufacturers(request: Request, db: Session = Depends(get_db)):
+    manufacturer = db.query(models.Manufacturer).all()
+    return manufacturer
 
 @app.get("/")
 def home(request: Request, db: Session = Depends(get_db)):
@@ -319,3 +366,39 @@ def delete(request: Request, plane_id: int, db: Session = Depends(get_db)):
 
     url = app.url_path_for("home")
     return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
+
+
+
+#planes = [int, Plane] = {}
+# @app.get("/todos/")
+# async def create_plane(request: Request, db: Session = Depends(get_db)):
+#       todos = db.query(models.Todo).all()
+#       return templates.TemplateResponse("todos.html", {"request": request, "todo_list": todos})
+
+#     id_ = max(planes.keys(), default=0) + 1
+#     planes[id_] = plane
+#     return {"id": id_, "plane": plane}
+
+# @app.get("/todo/{id_}", response_model=Plane)
+# async def read_plane(id_: int):
+#     if id_ not in planes:
+#         raise HTTPException(status_code=404, detail="plane not found")
+#     return planes[id_]
+
+# @app.put("/plane/{id_}", response_model=Plane)
+# async def update_plane(id_: int, plane: Plane):
+#     if id_ not in planes:
+#         raise HTTPException(status_code=404, detail="plane not found")
+#     planes[id_] = plane
+#     return plane
+
+# @app.delete("/plane/{id_}")
+# async def delete_plane(id_: int):
+#     if id_ not in planes:
+#         raise HTTPException(status_code=404, detail="plane not found")
+#     del planes[id_]
+#     return {"detail": "plane has been deleted"}
+
+# @app.get("/planes/")
+# async def read_all_planes():
+#     return planes

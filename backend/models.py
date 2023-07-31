@@ -1,10 +1,9 @@
-from sqlalchemy import create_engine, Boolean, Column, Integer, String, REAL, ForeignKey, event
+from sqlalchemy import Boolean, Column, Integer, String, REAL, ForeignKey
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.orm import Mapped
 
-from sqlalchemy.orm import declarative_base, relationship, Mapped, Session, mapped_column, Session
+from sqlalchemy.orm import relationship
 
-from database import Base, declarative_base
+from database import Base
 
 class Base(DeclarativeBase):
     pass
@@ -73,6 +72,7 @@ class Plane(Base):
     delivered = Column(Boolean, default=False)
 
     window = relationship("Window", back_populates="planes")
+
     engine = relationship("Engine", back_populates="planes")
     avionic = relationship("Avionic", back_populates="planes")
 #,link_to_name=True
