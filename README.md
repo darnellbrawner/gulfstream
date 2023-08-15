@@ -1,6 +1,7 @@
 # gulfstream
-Coding
-Please build an API with FastAPI and SQL lite for our aircraft in Gulfstream. Define schema in each database (Performance, Cabin, and Systems) and related each other. The aircraft name should be the unique key and queried by its range, speed, cabin size (total interior length) and engines. Each aircraft should have its image saved in the database assuming to deliver those to a frontend. Aircraft images are attached.
-We’d like to see CRUD operation for aircraft in the API that allows managing the database based on the aircraft name. For example, if you create an aircraft named G800, its performance, cabin and system information should be saved in databases (Performance, Cabin, and Systems) as well.
-Please work on it by initiating a Git repository and share with us through GitHub when it’s done, and place MD file for introduction.
-Source from Aircraft - Gulfstream Aerospace
+make sure uvicorn is installed and sqlalchemy 2.0+ is installed
+cd into backend and run "unicorn app:app --reload"
+Then in a new termenal: cd into frontend and run "npm run dev"
+
+In your browser if all your base files are installed you might ahve to run npm install in the frontend directory.
+http://localhost:5173 should bring up the simple web interface.
