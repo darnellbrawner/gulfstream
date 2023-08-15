@@ -7,7 +7,9 @@
 
 <div class="ui segment">
 	<a href={`/planes/${plane.id}`}>
-		<p class="ui big header">{plane.name}</p>
+		<p class="ui big header">
+			<a href={`/planes/${plane.id}`}>{plane.name}</a>
+		</p>
 	</a>
 	<div class="row">
 		<div class="column">
@@ -23,7 +25,7 @@
 		</div>
 		<div class="column">
 			<p class="ui big header">Systems</p>
-			<p>{ plane.avionic.name} : Avionics</p>
+			<p><a href={`/avionics/${plane.avionic.id}`}>{ plane.avionic.name}</a> : Avionics</p>
 			<p>
 					{ plane.engine_count} x 
 					<a href={`/engines/${plane.engine.id}`}>
@@ -32,5 +34,8 @@
 			</p>
 
 		</div>
+	</div>
+	<div class="row">
+        <!-- <button on:click={(e) => deletePlane(plane)}>Delete</button> -->
 	</div>
 </div>

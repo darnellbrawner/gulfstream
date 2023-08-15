@@ -2,8 +2,8 @@
 	// @ts-nocheck
 	import { page } from '$app/stores';
 	import { onMount } from "svelte";
-	import { configs } from '../../config.js';
-	import EngineCard from './EngineCard.svelte';
+	import { configs } from '../../../config.js';
+	import EngineCard from '../EngineCard.svelte';
 	let engines = [];
 
 	onMount( async () => {

@@ -6,9 +6,11 @@
 </script>
 
 <div class="ui segment">
-	<a href={`/engines/${engine.id}`}>
-		<p class="ui big header">{engine.make} {engine.model}</p>
-	</a>
+	
+		<p class="ui big header">
+			<a href={`/engines/${engine.id}`}>{engine.make} {engine.model}</a>
+		</p>
+
 	<p>Planes:
 		{#each engine.planes as plane}
 		<a href={`/planes/${plane.id}`}> {plane.name} </a>

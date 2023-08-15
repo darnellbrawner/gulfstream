@@ -1,11 +1,13 @@
 <script>
 	// @ts-nocheck
+	import { page } from '$app/stores';
 	import { onMount } from "svelte";
+	import { configs } from '../../config.js';
 	import AvionicCard from './AvionicCard.svelte';
 	let avionics = [];
 
 	onMount( async () => {
-		let data = await fetch('http://localhost:8000/avionics');
+		let data = await fetch(configs.baseURL+$page.url.pathname);
 		let avionicData = await data.json();
 		avionics = [...avionicData];
 	});

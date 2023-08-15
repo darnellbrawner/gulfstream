@@ -8,7 +8,9 @@
 
 <div class="ui segment">
 	<a href={`/avionics/${avionic.id}`}>
-		<p class="ui big header">{avionic.name}</p>
+		<p class="ui big header">
+			<a href={`/avionics/${avionic.id}`}>{avionic.name}</a>
+		</p>
 	</a>
 	<p>Planes:
 		{#each avionic.planes as plane}

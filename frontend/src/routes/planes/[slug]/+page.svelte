@@ -2,17 +2,15 @@
 	// @ts-nocheck
 	import { page } from '$app/stores';
 	import { onMount } from "svelte";
-	import { configs } from '../../config.js';
-	import PlaneCard from './PlaneCard.svelte';
-
-	let planes = []
+	import { configs } from '../../../config.js';
+	import PlaneCard from '../PlaneCard.svelte';
+	let planes = [];
 	
 	onMount( async () => {
 		let data = await fetch(configs.baseURL+$page.url.pathname);
 		let planeData = await data.json();
 		planes = [...planeData];
 	});
- 
  
 </script>
 
@@ -21,6 +19,6 @@
 	<meta name="description" content="Planes" />
 </svelte:head>
 
-{#each planes as plane}
+  {#each planes as plane}
   <PlaneCard {plane} />
-{/each} 
+  {/each}

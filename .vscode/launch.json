@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: FastAPI",
+      "type": "python",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "app:app",
+        "--reload"
+      ],
+      "jinja": true,
+      "justMyCode": true
+    },
+    {
+      "name": "Debug Qode Process",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}/frontend/",
+      "runtimeExecutable": "${workspaceRoot}/frontend/node_modules/.bin/qode",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/frontend/node_modules/.bin/qode.exe"
+      },
+      "args": [
+        "./dist/index.js"
+      ],
+      "outputCapture": "std"
+    }
+  ]
+}
