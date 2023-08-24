@@ -1,6 +1,6 @@
 from .schema import *
 
-class ManufacturerBaseSchema(BaseModel):
+class ManufacturerBaseSchema(MyBaseModel):
     id: Optional[int]
     name: str
     # content: str
@@ -9,13 +9,9 @@ class ManufacturerBaseSchema(BaseModel):
     # createdAt: datetime | None = None
     # updatedAt: datetime | None = None
 
-    class Config:
-        orm_mode = True
-        allow_population_by_field_name = True
-        arbitrary_types_allowed = True
 
 
-class ListManufacturerResponse(BaseModel):
+class ListManufacturerResponse(MyBaseModel):
     status: str
     results: int
     manufacturers: List[ManufacturerBaseSchema]

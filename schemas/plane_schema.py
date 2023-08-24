@@ -1,6 +1,6 @@
 from .schema import *
 
-class PlaneBaseSchema(BaseModel):
+class PlaneBaseSchema(MyBaseModel):
     id: Optional[int]
     name: str
     max_range_unit:  str
@@ -19,13 +19,8 @@ class PlaneBaseSchema(BaseModel):
     # createdAt: datetime | None = None
     # updatedAt: datetime | None = None
 
-    class Config:
-        orm_mode = True
-        allow_population_by_field_name = True
-        arbitrary_types_allowed = True
 
-
-class ListPlaneResponse(BaseModel):
+class ListPlaneResponse(MyBaseModel):
     status: str
     results: int
     planes: List[PlaneBaseSchema]

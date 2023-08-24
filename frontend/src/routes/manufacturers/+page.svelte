@@ -4,86 +4,68 @@
 	import { onMount } from "svelte";
 	import { fly } from 'svelte/transition';
 	import { configs } from '../../config.js';
-	import ManufacturerCard from './ManufacturerCard.svelte';
-	import {Button, ButtonGroup, Offcanvas, Modal,
+	import { addData, deleteData, getData, updateData } from '../../stores/api_calls.js'
+	//import ManufacturerCard from './ManufacturerCard.svelte';
+	import {Button, ButtonGroup, Offcanvas,
 		 ModalBody, ModalFooter, ModalHeader, Input, Label, Table} from 'sveltestrap';
 
-	let manufacturers = [];
-	
-	var addManufacturerForm = {
-		id: '',
-		name: '',
-	};
-	var editForm = {
-		_id: '',
-		name: '',
-	};
+	export let manufacturers = []
+
+	$: onDataChange(manufacturers);
+
+	const getPath = configs.baseURL+$page.url.pathname;
+
+	var addManufacturerForm = { id: null, name: '' };
+	var editForm = {_id: '', name: '' };
+
+	function onDataChange(manufacturers){
+		console.log('onDataChange:', manufacturers);
+	}
+
+	onMount( async () => {
+		getData(getPath)
+		.then((data) => manufacturers = data)
+		.catch((reason) => console.log("Message: " + reason.message ));
+	});
+
+	function refreshData(msg) {
+		getData(getPath)
+		.then(function (data) { manufacturers = data } )
+		.then(console.log(msg))
+		.catch((reason) => console.log("Message: " + reason.message ));
+	}
+
 	function editManufacturer(manufacturer) {
 		updatetoggle();
-		editForm = manufacturer; //manufacturer.manufacturer;
+		editForm = manufacturer; 
 	};
 	
 	function updateManufacturer() {
-		const payload = {
+		const payload = { 
 			id: editForm.id,
-			name: editForm.name,
+			name: editForm.name
 		};
-		const path = configs.baseURL+$page.url.pathname+"/"+editForm.id;
-		console.log(payload);
-		fetch(path, {
-			method: 'PATCH',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(payload)
-		})
-		.then(() => {
-			getManufacturers();
-		})
-		.catch(error => {
-			console.error('Error updating manufacturer:', error);
-			getManufacturers();
-		});
+		const patchPath = getPath+"/"+editForm.id;
+		updateData(patchPath, payload)
+		.then(() => { refreshData('update') });
 		updatetoggle();
 	}
 
-	 async function addManufacturer() {
-		const payload = {
-			id: null,
-			name: addManufacturerForm.name,
-		};
-		const path = configs.baseURL+$page.url.pathname
-		console.log(path)
-		const response = await fetch(path,
-		 {
-			method: 'POST',
-			headers: {'Content-Type': 'application/json', 'accept': 'application/json'},
-			body: JSON.stringify(payload)
-		})
-		.then(() => {
-			getManufacturers();
-		})
-		.catch(error => {
-			console.log('Error adding manufacturer:', error);
-			getManufacturers();
-		});
+	function  addManufacturer() {
+		addManufacturerForm.id = null;
+		addData(getPath, addManufacturerForm)
+		.then(()=>{ refreshData('add') });
 		addtoggle();
 	 }
 
 	 function removeManufacturer(manufacturerID) {
-		const path = configs.baseURL+$page.url.pathname+"/"+manufacturerID;
-		console.log(path);
-		fetch(path, {method: 'DELETE'})
-		.then(() => {
-			getManufacturers();
-		})
-		.catch(error => {
-			console.error('Error deleting manufacturer:', error);
-			getManufacturers();
-		});
+		let removePath = getPath+"/"+manufacturerID
+		deleteData(removePath)
+		.then(() => { refreshData('remove') });
 	 }
 
 	function initForm() {
+		addManufacturerForm.id = '';
 		addManufacturerForm.name = '';
 		editForm._id = '';
 		editForm.name = '';
@@ -103,21 +85,6 @@
 		updateopen = !updateopen;
 	};
 
-	onMount( async () => {
-		let data = await fetch(configs.baseURL+$page.url.pathname);
-		let manufacturerData = await data.json();
-		manufacturers = [...manufacturerData];
-	});
-	
-	function getManufacturers() {
-		fetch(configs.baseURL+$page.url.pathname)
-		.then(response => response.json())
-		.then(data => {manufacturers = data;
-		}).catch(error => console.error('Error fetching books:', error));
-
-	};
-
-
 </script>
 
 <svelte:head>
@@ -126,14 +93,13 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
 </svelte:head>
-
-
 <div>
 	<div class="row">
 		<div class="col-sm-12">
 			<h1>Manufacturers</h1>
 			<hr><br>
-			<Button color="success" on:click={addtoggle}>Add Manufacturer</Button>
+			<Button color="success" outline on:click = {() => addtoggle()}> Add Manufacturer</Button>
+			<Button color="success" outline on:click = {() => refreshData('refresh')} > Refresh Manufacturer</Button>
 			<br><br>
 			<Table hover>
 				<thead>
@@ -143,13 +109,13 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each manufacturers as manufacturer}
+				{#each manufacturers as manufacturer}
 				<tr transition:fly="{{ y: 48, duration: 200 }}">
 					<td>{ manufacturer.name }</td>
 					<td>{ manufacturer.id }</td>
 					<td><span style="float: right;">
-						<Button color="warning" on:click={editManufacturer(manufacturer)}>Update</Button>
-						<Button color="danger" on:click={removeManufacturer(manufacturer.id)}>Delete</Button>
+						<Button color="warning" on:click={() => editManufacturer(manufacturer)}>Update</Button>
+						<Button color="danger" on:click={() =>  removeManufacturer(manufacturer.id)}>Delete</Button>
 						</span>
 					</td>
 				</tr>
@@ -166,10 +132,10 @@
 			<p></p>
 		</ModalBody>
 		<ModalFooter>
-			<Button color="primary" on:click={addManufacturer}>
+			<Button color="primary" on:click={() => addManufacturer()}>
 				Add manufacturer
 			</Button>
-			<Button color="secondary" on:click={addtoggle}>
+			<Button color="secondary" on:click={() => addtoggle()}>
 				Cancel
 			</Button>
 		</ModalFooter>
@@ -182,10 +148,10 @@
 			<p></p>
 		</ModalBody>
 		<ModalFooter>
-			<Button color="primary" on:click={updateManufacturer}>
+			<Button color="primary" on:click={() => updateManufacturer()}>
 				Update
 			</Button>
-			<Button color="secondary" on:click={updatetoggle}>
+			<Button color="secondary" on:click={() => updatetoggle()}>
 				Cancel
 			</Button>
 		</ModalFooter>

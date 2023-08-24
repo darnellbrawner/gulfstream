@@ -18,5 +18,5 @@ from models.database import get_db
 from models import *
 from schemas import *
 
-from models.database import SessionLocal, engine
+from models.database import SessionLocal #, engine
 
